@@ -1,17 +1,17 @@
-import { getServerUrl } from '../utils/function.js';
-import { requestJson } from '../utils/request.js';
+import { apiRequest, saveAuthToken } from './client.js';
 
 export const userLogin = async (email, password) => {
-    const result = await requestJson(`${getServerUrl()}/v1/auth/login`, {
+    // 로그인 성공 시 내려오는 JWT를 저장해 이후 요청의 Authorization 헤더로 사용한다.
+    const result = await apiRequest('/auth/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include',
         body: JSON.stringify({
             email: email,
             password: password,
         }),
     });
+    if (result.ok) saveAuthToken(result.data);
     return result;
 };

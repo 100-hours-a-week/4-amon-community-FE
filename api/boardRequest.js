@@ -1,52 +1,50 @@
-import { getServerUrl } from '../utils/function.js';
-import { requestJson } from '../utils/request.js';
+import { apiRequest, normalizePostDetail } from './client.js';
 
 export const getPost = postId => {
-    const result = requestJson(`${getServerUrl()}/v1/posts/${postId}`, {
-        credentials: 'include',
-    });
+    // 새 게시글 상세 응답을 기존 화면 컴포넌트가 쓰는 필드명으로 정규화한다.
+    const result = apiRequest(`/posts/${postId}`, {}, { dataType: 'postDetail' });
     return result;
 };
 
 export const deletePost = async postId => {
-    const result = await requestJson(`${getServerUrl()}/v1/posts/${postId}`, {
+    const result = await apiRequest(`/posts/${postId}`, {
         method: 'DELETE',
-        credentials: 'include',
     });
     return result;
 };
 
 export const writeComment = async (pageId, comment) => {
-    const result = await requestJson(`${getServerUrl()}/v1/posts/${pageId}/comments`, {
+    // 댓글 생성 API의 본문 필드명이 commentContent에서 content로 바뀌었다.
+    const result = await apiRequest(`/comments/${pageId}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include',
-        body: JSON.stringify({ commentContent: comment }),
+        body: JSON.stringify({ content: comment }),
     });
     return result;
 };
 
 export const getComments = async postId => {
-    const result = await requestJson(`${getServerUrl()}/v1/posts/${postId}/comments`, {
-        credentials: 'include',
-    });
-    return result;
+    // 별도 댓글 목록 API 대신 게시글 상세에 포함된 comments를 화면용 배열로 추출한다.
+    const result = await apiRequest(`/posts/${postId}`, {}, { dataType: 'postDetail' });
+    return {
+        ...result,
+        data: normalizePostDetail(result.data)?.comments || [],
+    };
 };
 
 export const likePost = async postId => {
-    const result = await requestJson(`${getServerUrl()}/v1/posts/${postId}/likes`, {
+    const result = await apiRequest(`/posts/${postId}/like`, {
         method: 'POST',
-        credentials: 'include',
     });
     return result;
 };
 
 export const unlikePost = async postId => {
-    const result = await requestJson(`${getServerUrl()}/v1/posts/${postId}/likes`, {
-        method: 'DELETE',
-        credentials: 'include',
+    // 현재 백엔드는 좋아요 토글을 같은 POST 엔드포인트로 처리한다.
+    const result = await apiRequest(`/posts/${postId}/like`, {
+        method: 'POST',
     });
     return result;
 };

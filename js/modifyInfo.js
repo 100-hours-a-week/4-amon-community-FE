@@ -185,9 +185,9 @@ const deleteAccount = async () => {
 
         if (status === HTTP_OK) {
             try {
+                // JWT 기반 인증이라 credentials를 빼야 실배포 CORS에서 차단되지 않는다.
                 await requestJson(`${getServerUrl()}/v1/auth/logout`, {
                     method: 'POST',
-                    credentials: 'include',
                 });
             } catch (error) {
                 console.error('로그아웃 요청 실패:', error);

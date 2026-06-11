@@ -1,25 +1,22 @@
-import { getServerUrl } from '../utils/function.js';
-import { requestJson } from '../utils/request.js';
+import { apiRequest, clearAuthToken } from './client.js';
 
 export const userModify = async changeData => {
-    const result = await requestJson(`${getServerUrl()}/v1/users/me`, {
+    // 현재 백엔드는 닉네임 수정만 별도 엔드포인트로 받으므로 필요한 필드만 보낸다.
+    const result = await apiRequest('/users/nickname', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
-        credentials: 'include',
-        body: JSON.stringify(changeData),
-    });
+        body: JSON.stringify({ nickname: changeData.nickname }),
+    }, { successStatus: 201 });
     return result;
 };
 
 export const userDelete = async () => {
-    const result = await requestJson(`${getServerUrl()}/v1/users/me`, {
+    // 탈퇴 성공 후 남은 JWT가 재사용되지 않도록 로컬 인증 정보를 정리한다.
+    const result = await apiRequest('/users/withdraw', {
         method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        credentials: 'include',
     });
+    if (result.ok) clearAuthToken();
     return result;
 };

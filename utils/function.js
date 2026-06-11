@@ -10,6 +10,7 @@ export const getServerUrl = () => {
         return configUrl.replace(/\/+$/, '');
     }
 
+    // config.js가 없을 때도 로컬 개발 서버에서는 3000 포트 API 기준으로 동작하게 한다.
     const host = window.location.hostname;
     return host.includes('localhost')
         ? 'http://localhost:3000'
@@ -23,9 +24,9 @@ export const resolveImageUrl = (url, fallback = null) => {
 };
 
 export const serverSessionCheck = async () => {
+    // JWT 인증은 api/client.js의 fetch 어댑터가 Authorization 헤더로 붙이므로 credentials를 쓰지 않는다.
     const res = await fetch(`${getServerUrl()}/v1/auth/check`, {
         method: 'GET',
-        credentials: 'include',
     });
     return res;
 };
@@ -52,9 +53,24 @@ export const validEmail = email => {
 };
 
 export const validPassword = password => {
-    const REGEX =
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
-    return REGEX.test(password);
+    if (typeof password !== 'string') return false;
+
+    // 안내 문구의 "특수문자"와 맞게 공백을 제외한 보이는 ASCII 특수문자를 폭넓게 허용한다.
+    const isValidLength = password.length >= 8 && password.length <= 20;
+    const isVisibleAscii = /^[\x21-\x7E]+$/.test(password);
+    const hasLowercase = /[a-z]/.test(password);
+    const hasUppercase = /[A-Z]/.test(password);
+    const hasNumber = /\d/.test(password);
+    const hasSpecialCharacter = /[^A-Za-z0-9]/.test(password);
+
+    return (
+        isValidLength &&
+        isVisibleAscii &&
+        hasLowercase &&
+        hasUppercase &&
+        hasNumber &&
+        hasSpecialCharacter
+    );
 };
 
 export const validNickname = nickname => {

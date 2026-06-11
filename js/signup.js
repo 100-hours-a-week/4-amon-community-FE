@@ -21,6 +21,8 @@ const HTTP_CREATED = 201;
 const signupData = {
     email: '',
     password: '',
+    // 비밀번호 확인값도 상태에 포함해 버튼 활성화와 제출 검증이 같은 값을 보게 한다.
+    passwordCheck: '',
     nickname: '',
     profileImageUrl: undefined,
 };
@@ -41,7 +43,8 @@ const sendSignupData = async () => {
         props.profileImageUrl = localStorage.getItem('profileImageUrl');
     }
 
-    if (props.password > MAX_PASSWORD_LENGTH) {
+    // 문자열 자체가 아니라 길이를 비교해야 20자 초과를 정확히 걸러낸다.
+    if (props.password.length > MAX_PASSWORD_LENGTH) {
         Dialog('비밀번호', '비밀번호는 20자 이하로 입력해주세요.');
         return;
     }
@@ -81,7 +84,8 @@ const changeEventHandler = async (event, uid) => {
         const helperElement = document.querySelector(
             `.inputBox p[name="${uid}"]`,
         );
-        helperElement.textContent = '';
+        // 프로필 input에는 helper 문구 요소가 없을 수 있으므로 있을 때만 초기화한다.
+        if (helperElement) helperElement.textContent = '';
     }
     observeSignupData();
 };
@@ -131,13 +135,24 @@ const inputEventHandler = async (event, uid) => {
         if (value == '' || value == null) {
             helperElement.textContent = '*비밀번호를 입력해주세요.';
             helperElementCheck.textContent = '';
+            // 잘못된 입력 뒤에도 이전 정상 값이 남아 가입 버튼이 켜지는 일을 막는다.
+            signupData.password = '';
+            signupData.passwordCheck = '';
         } else if (!isValidPassword) {
             helperElement.textContent =
                 '*비밀번호는 8자 이상, 20자 이하이며, 대문자, 소문자, 숫자, 특수문자를 각각 최소 1개 포함해야 합니다.';
             helperElementCheck.textContent = '';
+            // 검증 실패 시 확인값까지 초기화해 화면 메시지와 내부 상태를 맞춘다.
+            signupData.password = '';
+            signupData.passwordCheck = '';
         } else {
             helperElement.textContent = '';
             signupData.password = value;
+            if (signupData.passwordCheck && signupData.passwordCheck !== value) {
+                // 비밀번호를 다시 바꾸면 기존 확인값은 더 이상 신뢰할 수 없다.
+                signupData.passwordCheck = '';
+                helperElementCheck.textContent = '*비밀번호가 다릅니다.';
+            }
         }
     } else if (uid == 'pwck') {
         const value = event.target.value;
@@ -149,8 +164,11 @@ const inputEventHandler = async (event, uid) => {
 
         if (value == '' || value == null) {
             helperElement.textContent = '*비밀번호 한번 더 입력해주세요.';
+            // 빈 확인 입력은 제출 가능한 상태가 아니므로 내부 확인값도 비운다.
+            signupData.passwordCheck = '';
         } else if (password !== value) {
             helperElement.textContent = '*비밀번호가 다릅니다.';
+            signupData.passwordCheck = '';
         } else {
             signupData.passwordCheck = value;
             helperElement.textContent = '';
