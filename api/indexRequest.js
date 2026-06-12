@@ -1,17 +1,11 @@
 import { apiRequest } from './client.js';
 
-// 백엔드가 offset 대신 cursor 기반 페이지네이션을 쓰므로 다음 cursor를 모듈 상태로 보관한다.
-let nextCursor = 0;
-
 export const getPosts = async (offset, limit) => {
-    // 화면이 첫 페이지를 요청하면 서버 cursor도 처음부터 다시 조회한다.
-    if (offset === 0) nextCursor = 0;
     const result = await apiRequest(
-        `/posts?cursor=${nextCursor || 0}&size=${limit}`,
+        `/posts?cursor=${offset}&size=${limit}`,
         {},
         { dataType: 'postList' },
     );
-    nextCursor = result.body?.data?.pagination?.nextCursor ?? nextCursor;
     return result;
 };
 

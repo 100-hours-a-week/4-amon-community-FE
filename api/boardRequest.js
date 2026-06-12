@@ -1,4 +1,4 @@
-import { apiRequest, normalizePostDetail } from './client.js';
+import { apiRequest } from './client.js';
 
 export const getPost = postId => {
     // 새 게시글 상세 응답을 기존 화면 컴포넌트가 쓰는 필드명으로 정규화한다.
@@ -23,15 +23,6 @@ export const writeComment = async (pageId, comment) => {
         body: JSON.stringify({ content: comment }),
     });
     return result;
-};
-
-export const getComments = async postId => {
-    // 별도 댓글 목록 API 대신 게시글 상세에 포함된 comments를 화면용 배열로 추출한다.
-    const result = await apiRequest(`/posts/${postId}`, {}, { dataType: 'postDetail' });
-    return {
-        ...result,
-        data: normalizePostDetail(result.data)?.comments || [],
-    };
 };
 
 export const likePost = async postId => {

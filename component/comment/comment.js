@@ -124,7 +124,7 @@ const CommentItem = (data, writerId, postId, commentId) => {
 
     if (
         data.author &&
-        parseInt(data.author.userId, 10) === parseInt(writerId, 10)
+        String(data.author.userId) === String(writerId)
     ) {
         const buttonWrap = document.createElement('span');
 
@@ -142,7 +142,7 @@ const CommentItem = (data, writerId, postId, commentId) => {
     }
 
     const p = document.createElement('p');
-    p.innerHTML = data.content.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    p.innerHTML = (data.content || '').replace(/(?:\r\n|\r|\n)/g, '<br>');
 
     commentInfoWrap.appendChild(infoDiv);
     commentInfoWrap.appendChild(p);

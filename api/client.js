@@ -210,7 +210,7 @@ const normalizeComment = (comment, postId) => ({
     ...comment,
     id: comment.id ?? comment.commentId,
     postId: comment.postId ?? postId,
-    content: comment.content ?? comment.commentContent,
+    content: comment.content ?? comment.commentContent ?? comment.comment,
     author: {
         userId: comment.author?.userId ?? comment.user?.userId,
         nickname: comment.author?.nickname ?? comment.user?.nickname,

@@ -12,7 +12,6 @@ import {
     getPost,
     deletePost,
     writeComment,
-    getComments,
     likePost,
     unlikePost,
 } from '../api/boardRequest.js';
@@ -144,40 +143,31 @@ const setBoardDetail = data => {
     commentCountElement.textContent = data.commentCount.toLocaleString();
 };
 
-const setBoardModify = async (data, myInfo) => {
-    if (myInfo.idx === data.writerId) {
-        const modifyElement = document.querySelector('.hidden');
-        modifyElement.classList.remove('hidden');
+const setBoardModify = (data, myInfo) => {
+    const modifyElement = document.querySelector('.hidden');
+    modifyElement.classList.remove('hidden');
 
-        const modifyBtnElement = document.querySelector('#deleteBtn');
-        const postId = getQueryString('id');
-        modifyBtnElement.addEventListener('click', () => {
-            Dialog(
-                '게시글을 삭제하시겠습니까?',
-                '삭제한 내용은 복구 할 수 없습니다.',
-                async () => {
-                    const { ok } = await deletePost(postId);
-                    if (ok) {
-                        window.location.href = '/';
-                    } else {
-                        Dialog('삭제 실패', '게시글 삭제에 실패하였습니다.');
-                    }
-                },
-            );
-        });
+    const modifyBtnElement = document.querySelector('#deleteBtn');
+    const postId = getQueryString('id');
+    modifyBtnElement.addEventListener('click', () => {
+        Dialog(
+            '게시글을 삭제하시겠습니까?',
+            '삭제한 내용은 복구 할 수 없습니다.',
+            async () => {
+                const { ok } = await deletePost(postId);
+                if (ok) {
+                    window.location.href = '/';
+                } else {
+                    Dialog('삭제 실패', '게시글 삭제에 실패하였습니다.');
+                }
+            },
+        );
+    });
 
-        const modifyBtnElement2 = document.querySelector('#modifyBtn');
-        modifyBtnElement2.addEventListener('click', () => {
-            window.location.href = `/html/board-modify.html?postId=${data.id}`;
-        });
-    }
-};
-
-const getBoardComment = async id => {
-    const { ok, status, data } = await getComments(id);
-    if (!ok) return [];
-    if (status !== HTTP_OK) return [];
-    return data;
+    const modifyBtnElement2 = document.querySelector('#modifyBtn');
+    modifyBtnElement2.addEventListener('click', () => {
+        window.location.href = `/html/board-modify.html?postId=${data.id}`;
+    });
 };
 
 const setBoardComment = (data, myInfo) => {
@@ -260,12 +250,13 @@ const init = async () => {
 
         const pageData = await getBoardDetail(pageId);
 
-        if (parseInt(pageData.userId, 10) === parseInt(myInfo.userId, 10)) {
+        const postAuthorId = pageData.writerId ?? pageData.userId;
+        if (postAuthorId && String(postAuthorId) === String(myInfo.userId)) {
             setBoardModify(pageData, myInfo);
         }
         setBoardDetail(pageData);
 
-        getBoardComment(pageId).then(data => setBoardComment(data, myInfo));
+        setBoardComment(pageData.comments || [], myInfo);
     } catch (error) {
         console.error(error);
     }
