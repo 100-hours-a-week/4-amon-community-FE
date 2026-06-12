@@ -86,6 +86,9 @@ const loadBoardItems = async ({ reset = false } = {}) => {
         }
         setBoardItem(items);
         offset += ITEMS_PER_LOAD;
+        if (items.length < ITEMS_PER_LOAD) {
+            isEnd = true;
+        }
     } catch (error) {
         console.error('Error fetching items:', error);
         isEnd = true;
@@ -133,17 +136,18 @@ const addSortEvent = () => {
 
 // 스크롤 이벤트 추가
 const addInfinityScrollEvent = () => {
-    offset = INITIAL_OFFSET;
-    isEnd = false;
-    isProcessing = false;
-
-    window.addEventListener('scroll', async () => {
-        const hasScrolledToThreshold =
-            window.scrollY + window.innerHeight >=
-            document.documentElement.scrollHeight * SCROLL_THRESHOLD;
-        if (hasScrolledToThreshold) {
-            loadBoardItems();
-        }
+    let scrollThrottleTimer = null;
+    window.addEventListener('scroll', () => {
+        if (scrollThrottleTimer) return;
+        scrollThrottleTimer = setTimeout(() => {
+            scrollThrottleTimer = null;
+            const hasScrolledToThreshold =
+                window.scrollY + window.innerHeight >=
+                document.documentElement.scrollHeight * SCROLL_THRESHOLD;
+            if (hasScrolledToThreshold) {
+                loadBoardItems();
+            }
+        }, 300);
     });
 };
 
