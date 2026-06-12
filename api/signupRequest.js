@@ -1,16 +1,20 @@
 import { apiRequest, createLocalFileResult, toFormData } from './client.js';
 
+let pendingProfileImage = null;
+
 export const userSignup = async data => {
-    // 서버의 이미지 저장 디렉토리가 준비되지 않으면 profileImage 필드가 500을 내므로 기본 가입 정보만 전송한다.
+    // 프로필 이미지는 선택 시점이 아니라 회원가입 요청과 같은 multipart/form-data에 실어 보낸다.
     const formData = toFormData({
         email: data.email,
         password: data.password,
         nickname: data.nickname,
+        profileImage: pendingProfileImage,
     });
     const result = await apiRequest('/users/', {
         method: 'POST',
         body: formData,
     }, { successStatus: 201 });
+    if (result.ok) pendingProfileImage = null;
     return result;
 };
 
@@ -39,7 +43,7 @@ export const checkNickname = async nickname => {
 };
 
 export const fileUpload = async file => {
-    // 실제 업로드는 잠시 보류하고, 선택한 이미지는 브라우저 미리보기 URL로만 반환한다.
-    const profileImage = file.get('profileImage');
-    return createLocalFileResult(profileImage, 'profileImageUrl');
+    // 실제 업로드는 가입 제출 시점에 하며, 선택 직후에는 파일만 보관한다.
+    pendingProfileImage = file.get('profileImage');
+    return createLocalFileResult(pendingProfileImage, 'profileImageUrl');
 };
