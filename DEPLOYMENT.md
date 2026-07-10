@@ -4,14 +4,14 @@
 
 ## GitHub 설정
 
-GitHub 저장소의 `Settings > Environments`에서 `production` 환경을 만든 후 다음 값을 등록한다.
+GitHub 저장소의 `Settings > Secrets and variables > Actions`에 다음 Repository secret을 등록한다. 워크플로에서 사용하는 `production` 환경도 생성한다.
 
 | 구분 | 이름 | 값 |
 | --- | --- | --- |
-| Environment secret | `AWS_ROLE_ARN` | GitHub OIDC가 Assume할 AWS IAM Role ARN |
-| Environment variable | `AWS_REGION` | S3 버킷 리전(예: `ap-northeast-2`) |
-| Environment variable | `S3_BUCKET` | 버킷 이름(`s3://` 제외) |
-| Environment variable | `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront 배포 ID |
+| Repository secret | `AWS_ROLE_ARN` | GitHub OIDC가 Assume할 AWS IAM Role ARN |
+| Repository secret | `AWS_REGION` | S3 버킷 리전(예: `ap-northeast-2`) |
+| Repository secret | `S3_BUCKET` | 버킷 이름(`s3://` 제외) |
+| Repository secret | `CLOUDFRONT_DISTRIBUTION_ID` | CloudFront 배포 ID |
 
 장기 Access Key를 GitHub에 저장하지 않고 OIDC로 임시 자격 증명을 발급받는다. AWS IAM의 GitHub OIDC Provider와 Role 신뢰 정책을 먼저 설정해야 하며, 신뢰 정책의 `sub` 조건은 이 저장소의 `production` 환경으로 제한한다.
 

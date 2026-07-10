@@ -36,16 +36,16 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
-          aws-region: ${{ vars.AWS_REGION }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Sync files to S3
         run: |
-          aws s3 sync deploy/ "s3://${{ vars.S3_BUCKET }}" \
+          aws s3 sync deploy/ "s3://${{ secrets.S3_BUCKET }}" \
             --delete \
             --only-show-errors
 
       - name: Invalidate CloudFront cache
         run: |
           aws cloudfront create-invalidation \
-            --distribution-id "${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}" \
+            --distribution-id "${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}" \
             --paths "/*"
