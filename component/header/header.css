@@ -8,8 +8,8 @@ header {
     justify-content: center;
     padding: 32px 8px;
 
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-    background-color: #f4f5f7;
+    border-bottom: 1px solid #cfe5e5;
+    background-color: rgba(250, 252, 249, 0.96);
     position: absolute;
     top: 0;
     z-index: 99;
@@ -18,14 +18,28 @@ header {
 header h1 {
     grid-area: title;
 
-    font-size: 32px;
+    font-size: 0;
     line-height: 1.5em;
     letter-spacing: -0.02em;
-    color: #000000;
+    color: #145f59;
 
     text-align: center;
 
-    font-weight: 400;
+    font-weight: 700;
+}
+
+header h1::after {
+    content: '여정';
+    font-size: 32px;
+}
+
+header h1::before {
+    content: '✈';
+    display: inline-block;
+    margin-right: 8px;
+    color: #2f80c9;
+    font-size: 22px;
+    transform: rotate(-12deg);
 }
 
 header .back {

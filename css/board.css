@@ -43,7 +43,7 @@
     padding: 2px 12px;
 
     border-radius: 8px;
-    border: 1px solid #aca0eb;
+    border: 1px solid #5ca9c9;
     background-color: transparent;
 
     cursor: pointer;
@@ -166,10 +166,10 @@
     color: inherit;
 }
 .commentWrap .likeButton.is-active {
-    background-color: #aca0eb;
+    background: linear-gradient(135deg, #72b9a2, #6aa7d7);
 }
 .commentWrap .likeButton:focus-visible {
-    outline: 2px solid #7f6aee;
+    outline: 2px solid #2f80c9;
     outline-offset: 2px;
 }
 
@@ -243,9 +243,14 @@
     letter-spacing: -0.01em;
     cursor: pointer;
 
-    background-color: #aca0eb;
+    background: linear-gradient(135deg, #177e72, #2f80c9) !important;
     border: none;
     border-radius: 16px;
+}
+
+.commentInputWrap div button:disabled {
+    background: #9bc7c2 !important;
+    cursor: not-allowed;
 }
 
 .commentList {

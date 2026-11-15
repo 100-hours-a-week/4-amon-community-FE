@@ -224,13 +224,16 @@ export const normalizePostDetail = data => {
     const post = data?.post || data;
     if (!post) return post;
     const user = post.user || post.author || {};
+    // 작성자 id가 writerId/authorId/userId/user.id 중 어디로 오든 같은 필드로 모아둔다.
+    const authorId =
+        post.writerId ?? post.authorId ?? post.userId ?? user.userId ?? user.id;
 
     return {
         ...post,
         id: post.id ?? post.postId,
         postId: post.postId ?? post.id,
-        writerId: post.writerId ?? user.userId,
-        userId: post.userId ?? user.userId,
+        writerId: authorId,
+        userId: post.userId ?? authorId,
         nickname: post.nickname ?? user.nickname,
         profileImage: post.profileImage ?? user.profileImage,
         profileImageUrl: post.profileImageUrl ?? user.profileImage,
@@ -250,6 +253,15 @@ const normalizeData = (data, dataType) => {
     if (dataType === 'postList') {
         const posts = Array.isArray(data) ? data : data?.posts || [];
         return posts.map(normalizePostListItem);
+    }
+    if (dataType === 'postSearch') {
+        return {
+            posts: (data?.posts || []).map(normalizePostListItem),
+            pagination: {
+                nextCursor: data?.pagination?.nextCursor ?? null,
+                hasNext: data?.pagination?.hasNext === true,
+            },
+        };
     }
     if (dataType === 'postDetail') return normalizePostDetail(data);
     if (dataType === 'comments') {

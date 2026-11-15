@@ -9,10 +9,11 @@ const HTTP_NOT_AUTHORIZED = 401;
 const SCROLL_THRESHOLD = 0.9;
 const INITIAL_OFFSET = 5;
 const ITEMS_PER_LOAD = 5;
-const DEFAULT_SORT = 'recent';
+const DEFAULT_SORT = 'accuracy';
 let currentKeyword = '';
 let currentSort = DEFAULT_SORT;
 let offset = 0;
+let searchCursor = null;
 let isEnd = false;
 let isProcessing = false;
 
@@ -26,19 +27,19 @@ const updateSortVisibility = () => {
 
 // getBoardItem 함수
 const getBoardItem = async (offsetValue = 0, limitValue = 5) => {
-    const result =
-        currentKeyword.trim() === ''
-            ? await getPosts(offsetValue, limitValue)
-            : await searchPosts(
-                  currentKeyword,
-                  offsetValue,
-                  limitValue,
-                  currentSort,
-              );
+    const isSearching = currentKeyword.trim() !== '';
+    const result = isSearching
+        ? await searchPosts(
+              currentKeyword,
+              searchCursor,
+              limitValue,
+              currentSort,
+          )
+        : await getPosts(offsetValue, limitValue);
     if (!result.ok) {
         throw new Error('Failed to load post list.');
     }
-    return result.data;
+    return isSearching ? result.data : { posts: result.data };
 };
 
 const setBoardItem = boardData => {
@@ -76,18 +77,27 @@ const loadBoardItems = async ({ reset = false } = {}) => {
     try {
         if (reset) {
             offset = 0;
+            searchCursor = null;
             isEnd = false;
             resetBoardList();
         }
-        const items = await getBoardItem(offset, ITEMS_PER_LOAD);
+        const { posts: items, pagination } = await getBoardItem(
+            offset,
+            ITEMS_PER_LOAD,
+        );
         if (!items || items.length === 0) {
             isEnd = true;
             return;
         }
         setBoardItem(items);
-        offset += ITEMS_PER_LOAD;
-        if (items.length < ITEMS_PER_LOAD) {
-            isEnd = true;
+        if (currentKeyword.trim() !== '') {
+            searchCursor = pagination?.nextCursor ?? null;
+            isEnd = pagination?.hasNext !== true;
+        } else {
+            offset += ITEMS_PER_LOAD;
+            if (items.length < ITEMS_PER_LOAD) {
+                isEnd = true;
+            }
         }
     } catch (error) {
         console.error('Error fetching items:', error);

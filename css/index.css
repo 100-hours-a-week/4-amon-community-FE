@@ -26,9 +26,13 @@
     font-weight: 400;
     line-height: 32px;
     letter-spacing: -0.02em;
-    color: rgba(69, 72, 84, 1);
+    color: #23453a;
     text-align: center;
     width: 100%; /* h2도 중앙 정렬을 유지하도록 설정 */
+}
+
+.write h2 b {
+    color: #177e72;
 }
 
 .write a {
@@ -36,7 +40,7 @@
     margin-right: 10px;
     padding: 7px 32px;
     border-radius: 18px;
-    background-color: #aca0eb;
+    background: linear-gradient(135deg, #177e72, #2f80c9);
     font-size: 16px;
     font-weight: 400;
     line-height: 26px;
@@ -68,12 +72,12 @@
     gap: 8px;
     padding: 6px 10px;
     border-radius: 12px;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #cfe5e5;
     background-color: #ffffff;
 }
 
 .sortIcon {
-    color: #7f6aee;
+    color: #2f80c9;
 }
 
 .sortLabel {
@@ -96,7 +100,7 @@
 }
 
 .sortSelect:focus-visible {
-    outline: 2px solid #7f6aee;
+    outline: 2px solid #2f80c9;
     outline-offset: 2px;
     border-radius: 6px;
 }
@@ -117,7 +121,7 @@
     height: 40px;
     padding: 0 44px 0 16px;
     border-radius: 12px;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #cfe5e5;
     background-color: #ffffff;
     font-size: 16px;
     line-height: 26px;
@@ -131,8 +135,8 @@
 }
 
 .searchInput:focus {
-    border-color: #aca0eb;
-    box-shadow: 0 0 0 3px rgba(172, 160, 235, 0.2);
+    border-color: #2f80c9;
+    box-shadow: 0 0 0 3px rgba(47, 128, 201, 0.14);
 }
 
 .searchButton {
@@ -145,7 +149,7 @@
     border: none;
     border-radius: 8px;
     background-color: transparent;
-    color: #7f6aee;
+    color: #177e72;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
@@ -153,11 +157,11 @@
 }
 
 .searchButton:hover {
-    background-color: rgba(172, 160, 235, 0.15);
+    background-color: rgba(47, 128, 201, 0.1);
 }
 
 .searchButton:focus-visible {
-    outline: 2px solid #7f6aee;
+    outline: 2px solid #2f80c9;
     outline-offset: 2px;
 }
 
@@ -166,5 +170,5 @@ b {
 }
 
 .write a:hover {
-    background-color: #7f6aee; /* 여기서 색상을 원하는 색으로 변경하세요 */
+    background: linear-gradient(135deg, #126b61, #246dab);
 }
