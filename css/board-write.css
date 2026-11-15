@@ -45,6 +45,12 @@ h2 {
     background-color: transparent;
 }
 
+.inputBox input:focus,
+.inputBox textarea:focus {
+    border-bottom-color: #2f80c9;
+    box-shadow: 0 2px 0 rgba(47, 128, 201, 0.16);
+}
+
 .inputBox textarea {
     width: 100%;
     padding: 16px;
@@ -64,7 +70,7 @@ h2 {
     border-radius: 4px;
     cursor: pointer;
 
-    background-color: #aca0eb;
+    background: linear-gradient(135deg, #177e72, #2f80c9) !important;
 
     font-size: 14px;
     font-weight: 700;
@@ -74,6 +80,15 @@ h2 {
     color: rgba(255, 255, 255, 1);
 
     border: none;
+}
+
+.wrap button:disabled {
+    background: #9bc7c2 !important;
+    cursor: not-allowed;
+}
+
+.wrap button:not(:disabled):hover {
+    background: linear-gradient(135deg, #126b61, #246dab) !important;
 }
 
 .non-border {

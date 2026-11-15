@@ -6,6 +6,8 @@ import {
     getServerUrl,
     prependChild,
     resolveImageUrl,
+    resolvePostAuthorId,
+    resolveUserId,
 } from '../utils/function.js';
 import {
     createPost,
@@ -241,11 +243,34 @@ const init = async () => {
         isModifyMode = true;
         modifyData = await getBoardModifyData(modifyId);
 
-        if (data.idx !== modifyData.writerId) {
+        if (!modifyData || !modifyData.title) {
+            // 상세 조회는 성공했지만 본문이 비어 있으면 권한 문제가 아니라 잘못된 postId다.
+            return Dialog('게시글', '게시글을 불러오지 못했습니다.', () => {
+                window.location.href = '/';
+            });
+        }
+
+        const currentUserId = resolveUserId(data.data);
+        const postAuthorId = resolvePostAuthorId(modifyData);
+
+        // 두 식별자를 모두 읽어냈을 때만 화면에서 막는다.
+        // 응답 필드명이 달라 판별에 실패한 경우까지 차단하면 정상 작성자도 들어오지 못하고,
+        // 최종 권한 검사는 어차피 수정 요청(PATCH)에서 서버가 수행한다.
+        if (
+            currentUserId &&
+            postAuthorId &&
+            currentUserId !== postAuthorId
+        ) {
             Dialog('권한 없음', '권한이 없습니다.', () => {
                 window.location.href = '/';
             });
         } else {
+            if (!currentUserId || !postAuthorId) {
+                console.warn(
+                    '[board-write] 작성자 판별 실패 - 서버 권한 검사에 위임합니다.',
+                    { currentUserId, postAuthorId, me: data.data, modifyData },
+                );
+            }
             setModifyData(modifyData);
         }
     }

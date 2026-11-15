@@ -14,11 +14,10 @@ const port = 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-app.use(express.static(__dirname));
-
 app.get('/config.js', (req, res) => {
     // 로컬 실행 시 .env의 API 주소를 브라우저 전역 설정으로 내려준다.
-    const apiBaseUrl = process.env.API_BASE_URL || '';
+    const apiBaseUrl =
+        process.env.API_BASE_URL || 'http://localhost:8080';
     res.set('Cache-Control', 'no-store');
     res.type('application/javascript').send(
         `window.__APP_CONFIG__ = ${JSON.stringify({
@@ -26,6 +25,9 @@ app.get('/config.js', (req, res) => {
         })};`,
     );
 });
+
+// config.js는 로컬 실행 설정을 우선해야 하므로 정적 파일 제공보다 먼저 등록한다.
+app.use(express.static(__dirname));
 
 app.get('/', (req, res) => {
     res.redirect('/html/index.html');

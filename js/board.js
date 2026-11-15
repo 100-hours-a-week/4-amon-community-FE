@@ -7,6 +7,8 @@ import {
     prependChild,
     padTo2Digits,
     resolveImageUrl,
+    resolvePostAuthorId,
+    resolveUserId,
 } from '../utils/function.js';
 import {
     getPost,
@@ -250,8 +252,9 @@ const init = async () => {
 
         const pageData = await getBoardDetail(pageId);
 
-        const postAuthorId = pageData.writerId ?? pageData.userId;
-        if (postAuthorId && String(postAuthorId) === String(myInfo.userId)) {
+        const postAuthorId = resolvePostAuthorId(pageData);
+        const myUserId = resolveUserId(myInfo);
+        if (postAuthorId && myUserId && postAuthorId === myUserId) {
             setBoardModify(pageData, myInfo);
         }
         setBoardDetail(pageData);

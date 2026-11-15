@@ -39,7 +39,7 @@
 .commentInfoHeader span button {
     padding: 5px 12px;
     border-radius: 8px;
-    border: 1px solid #aca0eb;
+    border: 1px solid #5ca9c9;
     background-color: transparent;
     color: #000;
     font-size: 15px;
@@ -118,21 +118,21 @@
 }
 
 .commentEditSave {
-    background-color: #7f6aee;
+    background: linear-gradient(135deg, #177e72, #2f80c9);
     color: #fff;
     border: none;
 }
 
 .commentEditCancel {
-    background-color: #f3f0ff;
-    color: #5e48d8;
-    border: 1px solid #d8d1ff;
+    background-color: #eef8f7;
+    color: #176b65;
+    border: 1px solid #b9dcd7;
 }
 
 .commentEditSave:hover {
-    background-color: #6f58e8;
+    background: linear-gradient(135deg, #126b61, #246dab);
 }
 
 .commentEditCancel:hover {
-    background-color: #e7e2ff;
+    background-color: #dff1ef;
 }

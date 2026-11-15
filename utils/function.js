@@ -23,6 +23,26 @@ export const resolveImageUrl = (url, fallback = null) => {
     return `${getServerUrl()}${url}`;
 };
 
+// 사용자 식별자 필드명이 응답마다 userId/id/user.userId로 갈려서 한 곳에서 흡수한다.
+export const resolveUserId = source => {
+    if (!source) return null;
+    const id =
+        source.userId ??
+        source.id ??
+        source.user?.userId ??
+        source.user?.id ??
+        source.author?.userId ??
+        source.author?.id;
+    return id === undefined || id === null || id === '' ? null : String(id);
+};
+
+// 게시글 작성자 식별자도 동일한 이유로 여러 후보 필드를 순서대로 확인한다.
+export const resolvePostAuthorId = post => {
+    if (!post) return null;
+    const id = post.writerId ?? post.authorId ?? resolveUserId(post);
+    return id === undefined || id === null || id === '' ? null : String(id);
+};
+
 export const serverSessionCheck = async () => {
     // JWT 인증은 api/client.js의 fetch 어댑터가 Authorization 헤더로 붙이므로 credentials를 쓰지 않는다.
     const res = await fetch(`${getServerUrl()}/v1/auth/check`, {
